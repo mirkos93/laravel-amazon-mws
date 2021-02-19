@@ -55,12 +55,13 @@ class MWSFeeds
 
     protected function parseSubmitFeedResponse($response)
     {
-        $requestId = data_get($response, 'ResponseMetadata.RequestId');
-        $feed = data_get($response, 'SubmitFeedResult.FeedSubmissionInfo');
+        $requestId = data_get($response['response'], 'ResponseMetadata.RequestId');
+        $feed = data_get($response['response'], 'SubmitFeedResult.FeedSubmissionInfo');
 
         return [
             'request_id' => $requestId,
             'data' => $feed,
+            'quota_headers' => $response['quotaHeaders']
         ];
     }
 
@@ -78,9 +79,10 @@ class MWSFeeds
     protected function parseSubmissionResultResponse($response)
     {
         return [
-            'status_code' => data_get($response, 'Message.ProcessingReport.StatusCode'),
-            'processing_summary' => data_get($response, 'Message.ProcessingReport.ProcessingSummary'),
-            'result' => data_get($response, 'Message.ProcessingReport.Result'),
+            'status_code' => data_get($response['response'], 'Message.ProcessingReport.StatusCode'),
+            'processing_summary' => data_get($response['response'], 'Message.ProcessingReport.ProcessingSummary'),
+            'result' => data_get($response['response'], 'Message.ProcessingReport.Result'),
+            'quota_headers' => $response['quotaHeaders']
         ];
     }
 }

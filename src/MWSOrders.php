@@ -54,10 +54,10 @@ class MWSOrders
 
     public function parseResponse($response, $resultTypeName, $dataName)
     {
-        $requestId = data_get($response, 'ResponseMetadata.RequestId');
-        $data = data_get($response, $resultTypeName.'.'.$dataName);
-        $nextToken = data_get($response, $resultTypeName.'.NextToken');
-        $createdBefore = data_get($response, $resultTypeName.'.CreatedBefore');
+        $requestId = data_get($response['response'], 'ResponseMetadata.RequestId');
+        $data = data_get($response['response'], $resultTypeName.'.'.$dataName);
+        $nextToken = data_get($response['response'], $resultTypeName.'.NextToken');
+        $createdBefore = data_get($response['response'], $resultTypeName.'.CreatedBefore');
 
         //Check if single list item and wrap
         if (! is_null($data) && (! data_get($data, '0')) && in_array($resultTypeName, [
@@ -83,7 +83,7 @@ class MWSOrders
         }
 
         if ($resultTypeName == 'ListOrderItemsResult') {
-            $data['order_id'] = data_get($response, $resultTypeName.'.AmazonOrderId');
+            $data['order_id'] = data_get($response['response'], $resultTypeName.'.AmazonOrderId');
         }
 
         return $data;

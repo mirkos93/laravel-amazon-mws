@@ -182,12 +182,23 @@ class MWSClient
             'body' => $body,
             'query' => $this->getQuery($path, $action, $version, $params),
         ];
+
         $uri = 'https://'.$this->getDomain().$path;
         $response = $this->client->post($uri, $requestOptions);
         $xmlResponse = simplexml_load_string($response->getBody()->getContents());
         $json = json_encode($xmlResponse);
 
-        return json_decode($json, true);
+        $quotaHeaders = $response->getHeaders();
+        $quotaHeaders = collect($quotaHeaders);
+        $quotaHeaders = $quotaHeaders->filter( function($header, $key){
+            return in_array($key, ['x-mws-quota-max', 'x-mws-quota-remaining', 'x-mws-quota-resetsOn']);
+        })
+            ->map( function($header){
+                return $header[0];
+            } );
+        $quotaHeaders = $quotaHeaders->toArray();
+
+        return [ 'response' => json_decode($json, true), 'quotaHeaders' => $quotaHeaders ];
     }
 
     public function getDefaultQueryParams($action, $version, $params = [])

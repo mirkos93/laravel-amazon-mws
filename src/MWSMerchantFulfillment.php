@@ -24,12 +24,13 @@ class MWSMerchantFulfillment
 
     public function parseResponse($response, $resultTypeName)
     {
-        $requestId = data_get($response, 'ResponseMetadata.RequestId');
-        $data = data_get($response, $resultTypeName);
+        $requestId = data_get($response['response'], 'ResponseMetadata.RequestId');
+        $data = data_get($response['response'], $resultTypeName);
 
         $data = [
             'request_id' => $requestId,
             'data' => $data,
+            'quota_headers' => $response['quotaHeaders']
         ];
 
         return $data;
